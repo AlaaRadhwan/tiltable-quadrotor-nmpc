@@ -10,13 +10,13 @@ The controller runs closed-loop against a rigid-body plant with first-order serv
 
 **360° roll, 360° pitch and cartwheel about the end-effector**
 
-<!-- VIDEO-1: GitHub attachment URL to be added after upload -->
+https://github.com/user-attachments/assets/655a2031-ba85-4479-a90a-1ad1316c558d
 
 Complete 360° roll and 360° pitch maneuvers followed by an excerpt of a cartwheel (about a third of its full rotation), all holding the tool point in place. These are three separate simulation runs joined by straight cuts, so the time stamp restarts at each cut. Real-time playback; the orange marker is the controller's tool point and the green one is the target.
 
 **Simultaneous 6-DoF tracking**
 
-<!-- VIDEO-2: GitHub attachment URL to be added after upload -->
+https://github.com/user-attachments/assets/4e6740e5-68b6-4aa1-9d42-f53d4919f700
 
 One uncut 35 s run tracking simultaneous translation (±0.35 / ±0.30 / ±0.20 m) and rotation (roll ±40°, pitch ±30°, yaw ±60°) of the tool point.
 
