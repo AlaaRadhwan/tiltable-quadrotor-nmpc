@@ -1,0 +1,26 @@
+[project]
+name = "tiltable-quadrotor-rl"
+version = "0.1.0"
+description = "End-effector NMPC for an omnidirectional tiltable quadrotor in MuJoCo"
+readme = "README.md"
+requires-python = ">=3.13"
+# Imports used by the NMPC code, experiments and visualization.
+# Also required, but not pip-installable here: acados (built from source, with its
+# `acados_template` Python interface). Last run with Python 3.13.6, MuJoCo 3.10.0,
+# NumPy 2.4.6, SciPy 1.18.0 and CasADi 3.7.2; other versions are untested.
+dependencies = [
+    "mujoco",
+    "numpy",
+    "scipy",
+    "casadi",
+    "imageio",
+    "imageio-ffmpeg",  # MP4 writer used by --render-mp4
+    "pillow",
+]
+
+[project.optional-dependencies]
+analysis = ["pandas"]  # experiments/nmpc/analyze_paper_pitch_x_bias.py only
+
+[build-system]
+requires = ["uv_build>=0.11.21,<0.12.0"]
+build-backend = "uv_build"

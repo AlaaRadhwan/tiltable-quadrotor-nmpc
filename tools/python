@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Run Python with the project's src/ on PYTHONPATH.
+# Set TILTABLE_PYTHON to the interpreter that has mujoco, numpy, casadi and acados_template installed
+# (and ACADOS_SOURCE_DIR / LD_LIBRARY_PATH set for acados). Defaults to python3 on PATH.
+set -euo pipefail
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export PYTHONPATH="$PROJECT_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+exec "${TILTABLE_PYTHON:-python3}" "$@"

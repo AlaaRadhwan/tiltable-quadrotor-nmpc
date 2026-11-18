@@ -1,0 +1,338 @@
+<mujoco model="tiltable_quadrotor">
+    <compiler angle="radian" autolimits="true"/>
+
+    <option timestep="0.002" integrator="implicitfast" gravity="0 0 -9.81"/>
+
+    <visual>
+        <global ellipsoidinertia="true"/>
+    </visual>
+    
+    <default>
+        <!-- Visual geometry only: does not participate in collision -->
+        <default class="visual">
+            <geom group="2" contype="0" conaffinity="0"/>
+        </default>
+
+    </default>
+
+    <!-- World and Robot -->
+    <worldbody>
+
+        <light name="sun" pos="0 0 3" dir="0 0 -1" directional="true"/>
+
+        <!-- Visual reference plane only for now. -->
+        <geom
+            name="ground_visual"
+            type="plane"
+            size="3 3 0.1"
+            rgba="0.85 0.85 0.85 1"
+            contype="0"
+            conaffinity="0"/>
+
+        <!-- =======================================================
+                MAIN FREE-FLYING BODY
+                Body frame convention:
+                    +X = forward
+                    +Y = left
+                    +Z = up
+            ======================================================= -->
+        
+        <body name="base" pos="0 0 1">
+
+            <freejoint name="base_freejoint"/>
+
+            <inertial 
+                pos="0 0 0" 
+                mass="2.959" 
+                diaginertia="0.059575 0.058575 0.08855"/>
+            
+                <!-- Body / CoG reference frame -->
+                <site name="body_origin" pos="0 0 0" size="0.008"/>
+
+                <!-- IMU reference point -->
+                <site name="imu" pos="0 0 0" size="0.01"/>
+
+                <!-- Visual only body and arms -->
+                <geom
+                    name="base_visual"
+                    class="visual"
+                    type="box"
+                    size="0.08 0.08 0.025"
+                    rgba="0.2 0.2 0.2 1"/>
+                                
+                <geom
+                    name="arm_1_visual"
+                    class="visual"
+                    type="capsule"
+                    fromto="0 0 0 0.275 0 0"
+                    size="0.012"
+                    rgba="0.3 0.3 0.3 1"/>
+
+                <geom
+                    name="arm_2_visual"
+                    class="visual"
+                    type="capsule"
+                    fromto="0 0 0 0 0.275 0"
+                    size="0.012"
+                    rgba="0.3 0.3 0.3 1"/>
+
+                <geom
+                    name="arm_3_visual"
+                    class="visual"
+                    type="capsule"
+                    fromto="0 0 0 -0.275 0 0"
+                    size="0.012"
+                    rgba="0.3 0.3 0.3 1"/>
+
+                <geom
+                    name="arm_4_visual"
+                    class="visual"
+                    type="capsule"
+                    fromto="0 0 0 0 -0.275 0"
+                    size="0.012"
+                    rgba="0.3 0.3 0.3 1"/>
+                
+                <!-- =======================================================
+                        ROTOR 1
+                        Position: front (+X)
+                        Local X axis points outward
+                    ======================================================= -->
+                <!--
+                    Rotor tilt joints are kinematic state variables.
+
+                    They are NOT driven by MuJoCo torque/position actuators.
+                    The simulation updates alpha explicitly using the
+                    first-order servo model:
+
+                        alpha_dot = (alpha_cmd - alpha) / tau
+
+                    The joints exist so the rotor bodies/sites have the
+                    correct physical orientation for thrust application.
+                -->
+                
+                <body name="rotor_1" pos="0.275 0 0" euler="0 0 0">
+                    
+                    <inertial 
+                        pos="0 0 0"
+                        mass="0.02"
+                        diaginertia="0.0001 0.0001 0.0001"/>
+                    
+                    <joint 
+                        name="tilt_1"
+                        type="hinge"
+                        axis="1 0 0"
+                        range="-3.926990817 3.926990817"/>
+                    
+                    <site name="rotor_1_thrust" pos="0 0 0" size="0.008"/>
+
+                    <geom 
+                        name="rotor_1_visual"
+                        class="visual"
+                        type="cylinder"
+                        size="0.114 0.002"
+                        rgba="0.2 0.45 0.8 0.35"/>
+                </body>
+
+                <!-- ========================================================
+                    ROTOR 2
+                    Position: left (+Y)
+                    Rotate local frame +90 deg around Z so local +X points
+                    outward along +Y.
+                    ======================================================== -->
+
+                <body
+                    name="rotor_2"
+                    pos="0 0.275 0"
+                    euler="0 0 1.570796327">
+
+                    <inertial
+                        pos="0 0 0"
+                        mass="0.02"
+                        diaginertia="0.0001 0.0001 0.0001"/>
+
+                    <joint
+                        name="tilt_2"
+                        type="hinge"
+                        axis="1 0 0"
+                        range="-3.926990817 3.926990817"/>
+
+                    <site
+                        name="rotor_2_thrust"
+                        pos="0 0 0"
+                        size="0.008"/>
+
+                    <geom
+                        name="rotor_2_visual"
+                        class="visual"
+                        type="cylinder"
+                        size="0.114 0.002"
+                        rgba="0.2 0.45 0.8 0.35"/>
+
+                </body>
+
+
+                <!-- ========================================================
+                    ROTOR 3
+                    Position: rear (-X)
+                    ======================================================== -->
+
+                <body
+                    name="rotor_3"
+                    pos="-0.275 0 0"
+                    euler="0 0 3.141592654">
+
+                    <inertial
+                        pos="0 0 0"
+                        mass="0.02"
+                        diaginertia="0.0001 0.0001 0.0001"/>
+
+                    <joint
+                        name="tilt_3"
+                        type="hinge"
+                        axis="1 0 0"
+                        range="-3.926990817 3.926990817"/>
+
+                    <site
+                        name="rotor_3_thrust"
+                        pos="0 0 0"
+                        size="0.008"/>
+
+                    <geom
+                        name="rotor_3_visual"
+                        class="visual"
+                        type="cylinder"
+                        size="0.114 0.002"
+                        rgba="0.2 0.45 0.8 0.35"/>
+
+                </body>
+
+
+                <!-- ========================================================
+                    ROTOR 4
+                    Position: right (-Y)
+                    ======================================================== -->
+
+                <body
+                    name="rotor_4"
+                    pos="0 -0.275 0"
+                    euler="0 0 -1.570796327">
+
+                    <inertial
+                        pos="0 0 0"
+                        mass="0.02"
+                        diaginertia="0.0001 0.0001 0.0001"/>
+
+                    <joint
+                        name="tilt_4"
+                        type="hinge"
+                        axis="1 0 0"
+                        range="-3.926990817 3.926990817"/>
+
+                    <site
+                        name="rotor_4_thrust"
+                        pos="0 0 0"
+                        size="0.008"/>
+
+                    <geom
+                        name="rotor_4_visual"
+                        class="visual"
+                        type="cylinder"
+                        size="0.114 0.002"
+                        rgba="0.2 0.45 0.8 0.35"/>
+
+                </body>
+
+        </body>
+
+    </worldbody>
+
+    <!-- =======================================================
+            ACTUAtORS
+            Control ordering deliberately follows:
+                [f1, f2, f3, f4, alpha1_c, alpha2_c, alpha3_c, alpha4_c]
+        ======================================================= -->
+    
+    <actuator>
+
+        <!-- Rotor thrust + propeller reaction torque.
+         
+        Site-actuator gear is:
+            Fx Fy Fz Tx Ty Tz
+        
+        Force is along each rotor frame's local +Z.
+        
+        tau = -(b_i * kq/kt) * f
+        kq/kt = 0.0165 m
+        
+        Chosen spin convention:
+            b1 = +1
+            b2 = -1
+            b3 = +1
+            b4 = -1
+        -->
+        
+        <motor
+            name="thrust_1"
+            site="rotor_1_thrust"
+            gear="0 0 1 0 0 -0.0165"
+            ctrllimited="true"
+            ctrlrange="0 23"/>
+
+        <motor
+            name="thrust_2"
+            site="rotor_2_thrust"
+            gear="0 0 1 0 0 0.0165"
+            ctrllimited="true"
+            ctrlrange="0 23"/>
+
+        <motor
+            name="thrust_3"
+            site="rotor_3_thrust"
+            gear="0 0 1 0 0 -0.0165"
+            ctrllimited="true"
+            ctrlrange="0 23"/>
+
+        <motor
+            name="thrust_4"
+            site="rotor_4_thrust"
+            gear="0 0 1 0 0 0.0165"
+            ctrllimited="true"
+            ctrlrange="0 23"/>
+
+    </actuator>
+
+    <sensor>
+
+        <gyro name="imu_gyro" site="imu"/>
+
+        <accelerometer name="imu_accelerometer" site="imu"/>
+
+        <jointpos name="tilt_1_pos" joint="tilt_1"/>
+        <jointpos name="tilt_2_pos" joint="tilt_2"/>
+        <jointpos name="tilt_3_pos" joint="tilt_3"/>
+        <jointpos name="tilt_4_pos" joint="tilt_4"/>
+
+        <jointvel name="tilt_1_vel" joint="tilt_1"/>
+        <jointvel name="tilt_2_vel" joint="tilt_2"/>
+        <jointvel name="tilt_3_vel" joint="tilt_3"/>
+        <jointvel name="tilt_4_vel" joint="tilt_4"/>
+
+    </sensor>
+
+  <!-- ============================================================
+       USEFUL INITIAL STATE
+       ============================================================ -->
+
+  <keyframe>
+
+    <key
+        name="hover"
+        qpos="
+            0 0 1
+            1 0 0 0
+            0 0 0 0"
+        ctrl="7.4531475 7.4531475 7.4531475 7.4531475"/>
+
+  </keyframe>
+  
+</mujoco>

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT="$(
+    cd "$(dirname "${BASH_SOURCE[0]}")/.."
+    pwd
+)"
+
+run_test() {
+    local file="$1"
+
+    echo
+    echo "================================================================"
+    echo "Running: $file"
+    echo "================================================================"
+
+    "$ROOT/tools/python" \
+        "$ROOT/$file"
+}
+
+run_test tests/test_servo.py
+run_test tests/test_plant.py
+run_test tests/test_allocation_static.py
+run_test tests/test_allocation_mujoco.py
+run_test tests/test_allocation_dynamic.py
+
+echo
+echo "================================================================"
+echo "ALL PROJECT TESTS PASSED"
+echo "================================================================"

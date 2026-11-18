@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Training / generated outputs
+runs/
+logs/
+outputs/
+checkpoints/
+videos/
+*.pt
+*.pth
+*.onnx
+*.tfevents.*
+
+
+build/acados/
+artifacts/nmpc/
+artifacts/validation/MUJOCO_LOG.TXT
+
+# CAD visualization renders (generated)
+artifacts/cad_visual_renders/
+MUJOCO_LOG.TXT
+
+# Optional detailed CAD (user-supplied third-party meshes; never committed, see THIRD_PARTY.md)
+assets/cad_visual/meshes/third_party/
+assets/cad_visual/tiltable_quadrotor_visual_detailed.xml
+
+# Generated outputs, build products and media (never committed)
+build/
+artifacts/
+c_generated_code/
+*.mp4
+*.so
+*.o

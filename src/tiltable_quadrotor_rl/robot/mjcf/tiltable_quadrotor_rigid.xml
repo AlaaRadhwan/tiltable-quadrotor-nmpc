@@ -1,0 +1,358 @@
+<mujoco model="tiltable_quadrotor_rigid">
+
+    <compiler angle="radian" autolimits="true"/>
+
+    <option
+        timestep="0.002"
+        integrator="implicitfast"
+        gravity="0 0 -9.81"/>
+
+    <visual>
+        <global ellipsoidinertia="true"/>
+    </visual>
+
+    <default>
+        <!-- Visual geometry only. -->
+        <default class="visual">
+            <geom
+                group="2"
+                contype="0"
+                conaffinity="0"/>
+        </default>
+    </default>
+
+
+    <!-- ======================================================
+         WORLD
+         ====================================================== -->
+
+    <worldbody>
+
+        <light
+            name="sun"
+            pos="0 0 3"
+            dir="0 0 -1"
+            directional="true"/>
+
+        <geom
+            name="ground_visual"
+            type="plane"
+            size="3 3 0.1"
+            rgba="0.85 0.85 0.85 1"
+            contype="0"
+            conaffinity="0"/>
+
+
+        <!-- ==================================================
+             NOMINAL RIGID VEHICLE
+
+             Body convention:
+                 +X = forward
+                 +Y = left
+                 +Z = up
+
+             IMPORTANT:
+             The four rotor tilt angles are NOT mechanical
+             MuJoCo joints in this nominal plant.
+
+             They are actuator states maintained by the
+             external servo model.
+
+             Rotor thrust + reaction torque are combined
+             analytically into a body wrench and applied
+             to this rigid body.
+             ================================================== -->
+
+        <body
+            name="base"
+            pos="0 0 1">
+
+            <freejoint name="base_freejoint"/>
+
+            <!--
+                Entire nominal vehicle mass/inertia is represented
+                explicitly here.
+
+                The fixed tool geometry below does NOT introduce a
+                new body or joint. The current 3.039 kg / inertia
+                values already define the complete nominal rigid
+                vehicle used by the controller.
+
+                m = 3.039 kg
+                I = diag(0.063, 0.062, 0.095) kg m^2
+            -->
+            <inertial
+                pos="0 0 0"
+                mass="3.039"
+                diaginertia="0.063 0.062 0.095"/>
+
+
+            <!-- ==============================
+                 Reference sites
+                 ============================== -->
+
+            <site
+                name="body_origin"
+                pos="0 0 0"
+                size="0.008"/>
+
+            <site
+                name="imu"
+                pos="0 0 0"
+                size="0.01"/>
+
+
+            <!-- ==============================
+                 Fixed end effector
+
+                 p_BE^B = [0, 0, 0.15] m
+                 q_BE   = identity
+
+                 No joint is introduced. The tool is rigidly fixed
+                 to the vehicle body.
+
+                 The site is the authoritative MuJoCo tool frame.
+                 The spherical tip is collidable so later contact
+                 manipulation can use native MuJoCo contact forces.
+                 ============================== -->
+
+            <site
+                name="end_effector"
+                pos="0 0 0.15"
+                quat="1 0 0 0"
+                size="0.012"
+                rgba="1 0.55 0.1 1"/>
+
+            <geom
+                name="end_effector_shaft_visual"
+                class="visual"
+                type="capsule"
+                fromto="0 0 0.03  0 0 0.15"
+                size="0.008"
+                rgba="0.8 0.4 0.1 1"/>
+
+            <geom
+                name="end_effector_tip"
+                type="sphere"
+                pos="0 0 0.15"
+                size="0.02"
+                rgba="0.9 0.2 0.1 1"
+                contype="1"
+                conaffinity="1"/>
+
+
+            <!-- ==============================
+                 Main body visual
+                 ============================== -->
+
+            <geom
+                name="base_visual"
+                class="visual"
+                type="box"
+                size="0.08 0.08 0.025"
+                rgba="0.2 0.2 0.2 1"/>
+
+
+            <!-- ==============================
+                 Arm visuals
+                 ============================== -->
+
+            <geom
+                name="arm_1_visual"
+                class="visual"
+                type="capsule"
+                fromto="0 0 0 0.275 0 0"
+                size="0.012"
+                rgba="0.3 0.3 0.3 1"/>
+
+            <geom
+                name="arm_2_visual"
+                class="visual"
+                type="capsule"
+                fromto="0 0 0 0 0.275 0"
+                size="0.012"
+                rgba="0.3 0.3 0.3 1"/>
+
+            <geom
+                name="arm_3_visual"
+                class="visual"
+                type="capsule"
+                fromto="0 0 0 -0.275 0 0"
+                size="0.012"
+                rgba="0.3 0.3 0.3 1"/>
+
+            <geom
+                name="arm_4_visual"
+                class="visual"
+                type="capsule"
+                fromto="0 0 0 0 -0.275 0"
+                size="0.012"
+                rgba="0.3 0.3 0.3 1"/>
+
+
+            <!-- ==============================
+                 Rotor reference sites
+
+                 These are fixed POSITION markers only.
+                 Rotor tilt orientation is an external
+                 actuator state and is handled by
+                 the wrench model.
+                 ============================== -->
+
+            <site
+                name="rotor_1"
+                pos="0.275 0 0"
+                size="0.008"/>
+
+            <site
+                name="rotor_2"
+                pos="0 0.275 0"
+                size="0.008"/>
+
+            <site
+                name="rotor_3"
+                pos="-0.275 0 0"
+                size="0.008"/>
+
+            <site
+                name="rotor_4"
+                pos="0 -0.275 0"
+                size="0.008"/>
+
+
+            <!-- ==============================
+                 Rotor visuals
+
+                 These remain simple fixed visual disks.
+                 Dynamic tilt visualization can be handled
+                 separately without physical tilt DoFs.
+                 ============================== -->
+
+            <geom
+                name="rotor_1_visual"
+                class="visual"
+                type="cylinder"
+                pos="0.275 0 0"
+                size="0.114 0.002"
+                rgba="0.2 0.45 0.8 0.35"/>
+
+            <geom
+                name="rotor_2_visual"
+                class="visual"
+                type="cylinder"
+                pos="0 0.275 0"
+                size="0.114 0.002"
+                rgba="0.2 0.45 0.8 0.35"/>
+
+            <geom
+                name="rotor_3_visual"
+                class="visual"
+                type="cylinder"
+                pos="-0.275 0 0"
+                size="0.114 0.002"
+                rgba="0.2 0.45 0.8 0.35"/>
+
+            <geom
+                name="rotor_4_visual"
+                class="visual"
+                type="cylinder"
+                pos="0 -0.275 0"
+                size="0.114 0.002"
+                rgba="0.2 0.45 0.8 0.35"/>
+
+        </body>
+
+    </worldbody>
+
+    <!-- ======================================================
+         INTERNAL BODY-WRENCH INTERFACE
+
+         These are NOT six physical vehicle actuators.
+
+         The physical actuator model remains:
+             four thrust magnitudes
+             four commanded tilt angles
+
+         The external actuator layer computes:
+
+             wrench_B = B(alpha) f
+
+         and writes the resulting six body-frame wrench
+         components into these native MuJoCo actuators.
+
+         Site-transmission gear vectors are expressed in the
+         site's local frame, which here is the vehicle body frame.
+         ====================================================== -->
+
+    <actuator>
+
+        <!-- Body-frame forces -->
+
+        <motor
+            name="body_force_x"
+            site="body_origin"
+            gear="1 0 0 0 0 0"/>
+
+        <motor
+            name="body_force_y"
+            site="body_origin"
+            gear="0 1 0 0 0 0"/>
+
+        <motor
+            name="body_force_z"
+            site="body_origin"
+            gear="0 0 1 0 0 0"/>
+
+
+        <!-- Body-frame torques -->
+
+        <motor
+            name="body_torque_x"
+            site="body_origin"
+            gear="0 0 0 1 0 0"/>
+
+        <motor
+            name="body_torque_y"
+            site="body_origin"
+            gear="0 0 0 0 1 0"/>
+
+        <motor
+            name="body_torque_z"
+            site="body_origin"
+            gear="0 0 0 0 0 1"/>
+
+    </actuator>
+
+
+    <!-- ======================================================
+         SENSORS
+         ====================================================== -->
+
+    <sensor>
+
+        <gyro
+            name="imu_gyro"
+            site="imu"/>
+
+        <accelerometer
+            name="imu_accelerometer"
+            site="imu"/>
+
+    </sensor>
+
+
+    <!-- ======================================================
+         INITIAL STATE
+         ====================================================== -->
+
+    <keyframe>
+
+        <key
+            name="hover"
+            qpos="
+                0 0 1
+                1 0 0 0"/>
+
+    </keyframe>
+
+</mujoco>

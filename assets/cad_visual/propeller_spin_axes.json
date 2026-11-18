@@ -1,0 +1,67 @@
+{
+ "source": "assembly_observations.json rotors[].spin_axis_{origin_m,dir}",
+ "frame": "rotor_i body frame (MuJoCo), meters",
+ "cad_to_base_translation_m": [
+  0,
+  0,
+  -0.024612
+ ],
+ "rotors": {
+  "rotor_1": {
+   "point_local_m": [
+    0.0,
+    -4e-06,
+    -0.0384
+   ],
+   "axis_local_unit": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "cad_spin_mate": "Revolute 2",
+   "cad_propeller_instance": "Body1 <1>"
+  },
+  "rotor_2": {
+   "point_local_m": [
+    0.0,
+    -4e-06,
+    -0.0384
+   ],
+   "axis_local_unit": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "cad_spin_mate": "Revolute 3",
+   "cad_propeller_instance": "Body1 <2>"
+  },
+  "rotor_3": {
+   "point_local_m": [
+    0.0,
+    -4e-06,
+    -0.0384
+   ],
+   "axis_local_unit": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "cad_spin_mate": "Revolute 4",
+   "cad_propeller_instance": "Body1 <3>"
+  },
+  "rotor_4": {
+   "point_local_m": [
+    0.0,
+    -3e-06,
+    -0.0384
+   ],
+   "axis_local_unit": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "cad_spin_mate": "Revolute 5",
+   "cad_propeller_instance": "Body1 <4>"
+  }
+ }
+}

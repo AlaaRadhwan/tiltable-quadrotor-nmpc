@@ -1,0 +1,42 @@
+{
+ "base": {
+  "cad_name": "Base",
+  "triangles": 1014,
+  "bytes": 50784
+ },
+ "arm_plusX": {
+  "cad_name": "Arm_plusX",
+  "triangles": 198,
+  "bytes": 9984
+ },
+ "arm_negativeY": {
+  "cad_name": "Arm_negativeY",
+  "triangles": 198,
+  "bytes": 9984
+ },
+ "arm_negativeX": {
+  "cad_name": "Arm_negativeX",
+  "triangles": 198,
+  "bytes": 9984
+ },
+ "arm_plusY": {
+  "cad_name": "Arm_plusY",
+  "triangles": 198,
+  "bytes": 9984
+ },
+ "end_effector": {
+  "cad_name": "EndEffector",
+  "triangles": 1918,
+  "bytes": 95984
+ },
+ "servo_mount": {
+  "cad_name": "Servo_Mount",
+  "triangles": 586,
+  "bytes": 29384
+ },
+ "bldc_mount": {
+  "cad_name": "BLDC_Mount",
+  "triangles": 952,
+  "bytes": 47684
+ }
+}
